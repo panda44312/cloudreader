@@ -3716,12 +3716,13 @@ async function showChapter(index, scrollPosition) {
 
             document.onscroll = () => {
                 handleScroll();
-
+                
                 if (throttleTimer) return;
                 if (!currentBook || currentChapter === undefined) return;
                 if (!document.getElementById('readerPage').classList.contains('page-visible')) return;
 
                 throttleTimer = setTimeout(() => {
+                    scrollTop = document.documentElement.scrollTop;
                     BookManager.updateBookProgress(currentBook.id, currentChapter, scrollTop);
                     throttleTimer = null; // 重置计时器
                 }, 10000); // 10秒 节流
