@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="theme-default">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Layer</title>
+
+    <link rel="icon" type="image/svg+xml" href="./src/app.png">
+
+    <!-- ios icon -->
+    <link rel="apple-touch-icon" href="./src/app-apple-touch-icon.png">
+
+    <!-- PWA -->
+    <link rel="manifest" href="./src/manifest.json">
+
+    <!-- MDUI -->
+    <link rel="stylesheet" href="./src/mdui.css">
+    <script src="./src/mdui.global.js"></script>
+
+    <!-- CryptoJS -->
+    <script src="./src/crypto-js.min.js"></script>
+
+    <!-- jschardet for encoding detection -->
+    <script src="./src/jschardet.min.js"></script>
+
+    <!-- pako -->
+    <script src="./src/pako.min.js"></script>
+
+    <!-- base91 -->
+    <script src="./src/base91.min.js"></script>
+
+    <!-- hls.js -->
+    <script src="./src/hls.js"></script>
+
+    <!-- macy -->
+    <script src="./src/macy@2.js"></script>
+
+    <!-- localforage -->
+    <script src="./src/localforage.min.js"></script>
+
+    <!-- app -->
+    <link rel="stylesheet" href="./src/app.css">
+
+</head>
+
+<body>
+
+    <!-- Lock Screen Overlay -->
+    <div id="lockScreen">
+        <!-- Standard Lock Screen -->
+        <div id="standardLockScreen">
+            <div class="lock-icon">
+                <mdui-icon name="lock"></mdui-icon>
+            </div>
+            <div class="lock-title">应用已锁定</div>
+            <div class="password-container">
+                <div class="password-dots">
+                    <div class="password-dot" data-index="0"></div>
+                    <div class="password-dot" data-index="1"></div>
+                    <div class="password-dot" data-index="2"></div>
+                    <div class="password-dot" data-index="3"></div>
+                </div>
+            </div>
+            <div class="numpad">
+                <div class="numpad-button" data-value="1">1</div>
+                <mdui-button-icon class="numpad-button" data-value="2">2</mdui-button-icon>
+                <mdui-button-icon class="numpad-button" data-value="3">3</mdui-button-icon>
+                <mdui-button-icon class="numpad-button" data-value="4">4</mdui-button-icon>
+                <mdui-button-icon class="numpad-button" data-value="5">5</mdui-button-icon>
+                <mdui-button-icon class="numpad-button" data-value="6">6</mdui-button-icon>
+                <mdui-button-icon class="numpad-button" data-value="7">7</mdui-button-icon>
+                <mdui-button-icon class="numpad-button" data-value="8">8</mdui-button-icon>
+                <mdui-button-icon class="numpad-button" data-value="9">9</mdui-button-icon>
+                <mdui-button-icon class="numpad-button" data-value="clear">
+                    <mdui-icon name="backspace"></mdui-icon>
+                </mdui-button-icon>
+                <div class="numpad-button" data-value="0">0</div>
+                <mdui-button-icon class="numpad-button" data-value="enter">
+                    <mdui-icon name="check"></mdui-icon>
+                </mdui-button-icon>
+            </div>
+        </div>
+
+        <!-- Disguise Lock Screen (iframe container) -->
+        <div id="disguiseLockScreen" class="hidden">
+            <iframe id="disguiseFrame" src="" frameborder="0"></iframe>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading hidden">
+        <div class="text-center">
+            <mdui-circular-progress></mdui-circular-progress>
+            <p id="loadingText">处理中</p>
+
+            <div id="importProgress" class="hidden">
+                <div class="import-progress-container">
+                    <mdui-linear-progress id="importProgressBar" class="import-progress-bar"></mdui-linear-progress>
+                </div>
+                <p id="importProgressText">已处理: 0 / 0</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Main App Container -->
+    <div class="app-container">
+
+        <!-- Library Page -->
+        <div id="libraryPage" class="page page-hidden">
+
+
+            <div class="library-header">
+
+                <div class="library-title">
+                    <mdui-icon name="book"></mdui-icon>
+                    <h1>书库</h1>
+                </div>
+
+                <div class="library-actions">
+
+                    <mdui-button-icon id="adminBtn" class="action-btn hidden">
+                        <mdui-icon name="settings"></mdui-icon>
+                    </mdui-button-icon>
+
+                    <mdui-button-icon id="folderViewBtn" class="action-btn">
+                        <mdui-icon name="folder"></mdui-icon>
+                    </mdui-button-icon>
+
+                    <mdui-button-icon id="viewToggleBtn" class="action-btn">
+                        <mdui-icon name="grid_view"></mdui-icon>
+                    </mdui-button-icon>
+
+                    <mdui-button-icon id="addBookBtn" class="action-btn" variant="filled">
+                        <mdui-icon name="add"></mdui-icon>
+                    </mdui-button-icon>
+                </div>
+            </div>
+
+            <div class="sticky-header">
+
+                <div class="search-bar">
+                    <mdui-text-field variant="outlined" id="bookSearch" clearable placeholder="搜索书籍..."
+                        class="search-input form-input">
+                        <mdui-icon slot="end-icon" name="search"></mdui-icon>
+                    </mdui-text-field>
+                </div>
+
+                <div class="filters-container">
+                    <div class="filter-buttons">
+                        <mdui-chip id="filterAllBtn" selectable icon="book"
+                            selected-icon="book--outlined">全部</mdui-chip>
+                        <mdui-chip id="filterFavoritesBtn" selectable icon="star"
+                            selected-icon="star--outlined">收藏</mdui-chip>
+                        <mdui-chip id="filterRecentBtn" selectable icon="history" selected-icon="history">最近</mdui-chip>
+                    </div>
+
+                    <mdui-chip id="selectModeBtn" class="filter-btn filter-btn-inactive select-mode-btn">
+                        <mdui-icon name="select_all" slot="icon"></mdui-icon>
+                        多选
+                    </mdui-chip>
+                </div>
+
+            </div>
+
+            <!-- Current Folder Info -->
+            <div id="currentFolderInfo" class="hidden">
+                <div class="folder-breadcrumb">
+                    <div class="breadcrumb-item">
+                        <a href="#" class="breadcrumb-link" id="rootFolderLink">书库</a>
+                    </div>
+                    <div class="breadcrumb-separator">\</div>
+                    <div class="breadcrumb-item">
+                        <span id="currentFolderName">文件夹</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty Library State -->
+            <div id="emptyLibrary" class="empty-library hidden">
+                <div class="empty-library-content">
+                    <mdui-icon name="book" class="empty-library-icon"></mdui-icon>
+                    <p class="empty-library-text">您的书库还没有书籍</p>
+                    <mdui-button id="emptyLibraryImportButton">导入书籍</mdui-button>
+                </div>
+            </div>
+
+            <!-- Book List Container -->
+            <div id="bookListContainer">
+
+                <!-- Loading Skeleton -->
+                <div id="bookListSkeleton" class="hidden">
+                    <div class="skeleton-item"></div>
+                    <div class="skeleton-item"></div>
+                    <div class="skeleton-item"></div>
+                    <div class="skeleton-item"></div>
+                    <div class="skeleton-item"></div>
+                    <div class="skeleton-item"></div>
+                </div>
+
+                <!-- Grid View -->
+                <div id="bookGridView" class="hidden"></div>
+
+                <!-- List View -->
+                <div id="bookListView" class="hidden"></div>
+
+            </div>
+
+            <!-- Pagination Navigation -->
+            <div id="paginationNav" class="pagination-nav">
+                <div class="pagination-container">
+                    <mdui-button-icon id="prevPageBtn" icon="chevron_left"></mdui-button-icon>
+                    <div id="paginationNumbers" class="pagination-numbers"></div>
+                    <mdui-button-icon id="nextPageBtn" icon="chevron_right"></mdui-button-icon>
+                </div>
+                <div class="pagination-info">
+                    <span id="paginationInfo">第 1 页 / 共 1 页</span>
+                </div>
+            </div>
+
+            <!-- Batch Operation Toolbar -->
+            <mdui-bottom-app-bar id="batchToolbar" class="batch-toolbar" scroll-behavior="hide">
+                <div class="box">
+                    <mdui-button-icon id="cancelSelectionBtn" icon="close"></mdui-button-icon>
+                    <mdui-button-icon id="selectAllBtn" icon="select_all"></mdui-button-icon>
+                    <mdui-button-icon id="invertSelectionBtn" icon="select"></mdui-button-icon>
+                    <span id="selectedCount">已选择 0 项</span>
+                    <div style="flex-grow: 1"></div>
+                    <mdui-button-icon id="batchMoveBtn" icon="folder_open"></mdui-button-icon>
+                    <mdui-button-icon id="batchDeleteBtn" icon="delete"></mdui-button-icon>
+                </div>
+            </mdui-bottom-app-bar>
+
+        </div>
+
+        <!-- Folder View Page -->
+        <div id="foldersPage" class="page page-hidden">
+
+            <div class="folder-header">
+                <div class="folder-title">
+                    <mdui-icon name="folder"></mdui-icon>
+                    <h1>文件夹</h1>
+                </div>
+
+                <div class="folder-actions">
+                    <mdui-button-icon id="addFolderBtn" icon="add" variant="filled"></mdui-button-icon>
+                </div>
+            </div>
+
+            <!-- Folders List -->
+            <div>
+                <div id="foldersList">
+                    <div class="folder-item" data-folder="">
+                        <mdui-icon name="folder" class="folder-icon"></mdui-icon>
+                        <div class="folder-info">
+                            <div class="folder-name">全部书籍</div>
+                            <div class="folder-count" id="allBooksCount">0本书籍</div>
+                        </div>
+                    </div>
+                    <div class="folder-item" data-folder="uncategorized">
+                        <mdui-icon name="folder" class="folder-icon"></mdui-icon>
+                        <div class="folder-info">
+                            <div class="folder-name">未分类</div>
+                            <div class="folder-count" id="uncategorizedCount">0本书籍</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Reader Page -->
+        <div id="readerPage" class="page reader-page page-hidden">
+
+            <!-- Reader Header -->
+            <div class="reader-header">
+                <div class="box">
+                    <mdui-button-icon id="backToLibraryFromReader" variant="standard"
+                        icon="arrow_back"></mdui-button-icon>
+                    <mdui-button-icon id="toggleFavoriteBtn" variant="standard" icon="star"></mdui-button-icon>
+                </div>
+            </div>
+
+            <div class="reader-container" id="readerContent">
+                <div class="book-content"></div>
+            </div>
+
+            <div id="readerBottomBar" class="reader-bottom-bar">
+                <div class="box">
+                    <mdui-button-icon id="toggleChaptersBtn">
+                        <mdui-icon name="format_list_bulleted"></mdui-icon>
+                    </mdui-button-icon>
+                    <div>
+                        <mdui-button-icon id="prevChapterBtn">
+                            <mdui-icon name="chevron_left"></mdui-icon>
+                        </mdui-button-icon>
+                        <span id="chapterProgress">0 / 0</span>
+                        <mdui-button-icon id="nextChapterBtn">
+                            <mdui-icon name="chevron_right"></mdui-icon>
+                        </mdui-button-icon>
+                    </div>
+                    <mdui-button-icon id="readerSettingsBtn">
+                        <mdui-icon name="settings"></mdui-icon>
+                    </mdui-button-icon>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Panel (Reader) -->
+        <div id="readerSettingsPage" class="page page-hidden">
+
+            <div class="settings-header">
+                <div class="box">
+                    <mdui-button-icon id="settingsBackBtn" variant="standard" icon="arrow_back" name="" value=""
+                        type="button"></mdui-button-icon>
+                    <h3>阅读设置</h3>
+                </div>
+            </div>
+
+            <div class="settings-box">
+
+                <h4>背景</h4>
+                <div>
+                    <div class="settings-grid">
+
+                        <!-- 纯色 -->
+                        <div class="color-theme active" data-theme="default">
+                            <div class="color-theme-preview" style="background-color: #FFFFFF;">
+                            </div>
+                            <span>默认</span>
+                        </div>
+                        <div class="color-theme" data-theme="eyecare">
+                            <div class="color-theme-preview" style="background-color: #E3EDCD;"></div>
+                            <span>护眼</span>
+                        </div>
+                        <div class="color-theme" data-theme="blue">
+                            <div class="color-theme-preview" style="background-color: #e9eff5;"></div>
+                            <span>蓝色</span>
+                        </div>
+                        <div class="color-theme" data-theme="paper">
+                            <div class="color-theme-preview" style="background-color: #F7EEE3;"></div>
+                            <span>纸张</span>
+                        </div>
+
+                        <!-- 图片 -->
+                        <div class="color-theme" data-theme="paper-image">
+                            <div class="color-theme-preview" style="background-image: url('./src/bg/bg1-m.jpg'); background-size: cover; background-position: center;"></div>
+                            <span>羊皮纸</span>
+                            <a href="https://zh.freepik.com/%E5%85%8D%E8%B2%BB%E7%9F%A2%E9%87%8F/yellow-parchment_4393371.htm">图片来自 Freepik 的 rawpixel.com</a>
+                        </div>
+                        
+                        <div class="color-theme" data-theme="watercolor-image">
+                            <div class="color-theme-preview" style="background-image: url('./src/bg/bg2-m.jpg'); background-size: cover; background-position: center;"></div>
+                            <span>水彩</span>
+                            <a href="https://zh.freepik.com/%E5%85%8D%E8%B2%BB%E5%9C%96%E7%89%87/paper-texture-colorful-abstract-background_13463038.htm">图片来自 Freepik 的 rawpixel.com</a>
+                        </div>
+                        
+
+                        <div class="color-theme" data-theme="ink-image">
+                            <div class="color-theme-preview" style="background-image: url('./src/bg/bg3.jpg'); background-size: cover; background-position: center;"></div>
+                            <span>水墨</span>
+                            <a href="https://zh.freepik.com/%E5%85%8D%E8%B2%BB%E7%9F%A2%E9%87%8F/gray-blank-leafy-background_16281922.htm">图片来自 Freepik 的 rawpixel.com</a>
+                        </div>
+
+                    </div>
+                </div>
+
+                <h4>字体</h4>
+                <div>
+                    <link
+                        href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC&family=Noto+Serif+SC&family=ZCOOL+QingKe+HuangYou&family=ZCOOL+XiaoWei&family=Ma+Shan+Zheng&family=Zhi+Mang+Xing&family=Long+Cang&family=Liu+Jian+Mao+Cao&family=Zhi+Mang+Xing&family=Long+Cang&family=Liu+Jian+Mao+Cao&family=Noto+Serif+JP&family=Ma+Shan+Zheng&family=Zhi+Mang+Xing&family=ZCOOL+KuaiLe&display=swap"
+                        rel="stylesheet">
+
+                    <mdui-select id="fontFamily" variant="outlined" class="form-input" icon="font_download">
+                        <mdui-menu-item value="'Noto Serif SC', serif"
+                            style="font-family: 'Noto Serif SC', serif">默认字体</mdui-menu-item>
+                        <mdui-menu-item value="'Noto Serif SC', serif, -apple-system, BlinkMacSystemFont"
+                            style="font-family: 'Noto Serif SC', serif, -apple-system, BlinkMacSystemFont">思源宋体</mdui-menu-item>
+                        <mdui-menu-item value="'Noto Sans SC', sans-serif, -apple-system, BlinkMacSystemFont"
+                            style="font-family: 'Noto Sans SC', sans-serif, -apple-system, BlinkMacSystemFont">思源黑体</mdui-menu-item>
+                        <mdui-menu-item value="'ZCOOL XiaoWei', serif, -apple-system, BlinkMacSystemFont"
+                            style="font-family: 'ZCOOL XiaoWei', serif, -apple-system, BlinkMacSystemFont">站酷小薇</mdui-menu-item>
+                        <mdui-menu-item value="'ZCOOL QingKe HuangYou', cursive, -apple-system, BlinkMacSystemFont"
+                            style="font-family: 'ZCOOL QingKe HuangYou', cursive, -apple-system, BlinkMacSystemFont">站酷庆科黄油体</mdui-menu-item>
+                        <mdui-menu-item value="'ZCOOL KuaiLe', cursive, -apple-system, BlinkMacSystemFont"
+                            style="font-family: 'ZCOOL KuaiLe', cursive, -apple-system, BlinkMacSystemFont">站酷快乐体</mdui-menu-item>
+                        <mdui-menu-item value="'Ma Shan Zheng', cursive, -apple-system, BlinkMacSystemFont"
+                            style="font-family: 'Ma Shan Zheng', cursive, -apple-system, BlinkMacSystemFont">马善政楷体</mdui-menu-item>
+                        <mdui-menu-item value="'Zhi Mang Xing', cursive, -apple-system, BlinkMacSystemFont"
+                            style="font-family: 'Zhi Mang Xing', cursive, -apple-system, BlinkMacSystemFont">致命行书</mdui-menu-item>
+                        <mdui-menu-item value="'Long Cang', cursive, -apple-system, BlinkMacSystemFont"
+                            style="font-family: 'Long Cang', cursive, -apple-system, BlinkMacSystemFont">龙藏简体</mdui-menu-item>
+                        <mdui-menu-item value="'Liu Jian Mao Cao', cursive, -apple-system, BlinkMacSystemFont"
+                            style="font-family: 'Liu Jian Mao Cao', cursive, -apple-system, BlinkMacSystemFont">刘建毛草</mdui-menu-item>
+                        <mdui-menu-item value="'Ma Shan Zheng', cursive, -apple-system, BlinkMacSystemFont"
+                            style="font-family: 'Ma Shan Zheng', cursive, -apple-system, BlinkMacSystemFont">马善政楷体</mdui-menu-item>
+                    </mdui-select>
+                </div>
+
+                <h4>字体大小</h4>
+                <div class="flex">
+                    <mdui-slider type="range" id="fontSize" min="14" max="28" step="2" value="18" nolabel></mdui-slider>
+                    <span id="fontSizeValue">18px</span>
+                </div>
+
+                <h4>行间距</h4>
+                <div class="flex">
+                    <mdui-slider type="range" id="lineSpacing" min="1.2" max="2.2" step="0.1" value="1.6"
+                        nolabel></mdui-slider>
+                    <span id="lineSpacingValue">1.6</span>
+                </div>
+
+                <h4>段落间距</h4>
+                <div class="flex">
+                    <mdui-slider type="range" id="paragraphSpacing" min="0.5" max="2.5" step="0.1" value="1"
+                        nolabel></mdui-slider>
+                    <span id="paragraphSpacingValue">1em</span>
+                </div>
+
+                <h4>首行缩进</h4>
+                <div class="flex">
+                    <mdui-slider type="range" id="firstLineIndent" min="0" max="4" step="0.5" value="2"
+                        nolabel></mdui-slider>
+                    <span id="firstLineIndentValue">2em</span>
+                </div>
+
+                <div class="save-settings-box">
+                    <mdui-button id="saveSettingsButton" icon="save" full-width>保存设置</mdui-button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Chapters Panel -->
+        <div id="readerChaptersPage" class="page page-hidden">
+
+            <div class="chapters-panel-sticky">
+                <div class="box">
+                    <mdui-button-icon id="closeChaptersBtn" icon="arrow_back"></mdui-button-icon>
+                    <h3>目录</h3>
+                </div>
+            </div>
+
+            <div class="chapters-panel-box">
+                <mdui-text-field variant="outlined" id="chapterSearch" placeholder="搜索章节...">
+                    <mdui-icon slot="end-icon" name="search"></mdui-icon>
+                </mdui-text-field>
+
+                <ul id="chaptersListContainer"></ul>
+            </div>
+
+        </div>
+
+        <!-- Import Page -->
+        <div id="importPage" class="page page-hidden">
+
+            <div class="import-header">
+                <div class="import-title">
+                    <mdui-button-icon id="backToLibraryButton" icon="arrow_back" name="" value="" type="button"
+                        variant="standard"></mdui-button-icon>
+                    <h1>导入书籍</h1>
+                </div>
+            </div>
+
+            <div class="card">
+
+                <div>
+                    <label for="bookFile" id="dropZone" class="book-file-dropzone">
+                        <mdui-icon name="upload"></mdui-icon>
+                        <span>点击选择或拖放TXT文件</span>
+                        <span>支持批量导入</span>
+                        <input type="file" id="bookFile" accept=".txt" style="display: none;" multiple>
+                    </label>
+                </div>
+
+                <div id="batchImportOptions" class="hidden">
+
+                    <div class="flex">
+                        <mdui-select label="导入到文件夹" variant="outlined" icon="folder" id="batchImportFolder">
+                            <mdui-menu-item>根目录</mdui-menu-item>
+                            <mdui-button-icon slot="end-icon" id="newFolderForBatchBtn" icon="add"></mdui-button-icon>
+                        </mdui-select>
+                    </div>
+
+                    <div class="flex">
+                        <mdui-checkbox id="favoriteOnBatchImport">
+                            <label for="favoriteOnBatchImport">添加到收藏夹</label>
+                        </mdui-checkbox>
+                    </div>
+
+                    <div class="flex">
+                        <mdui-icon name="info"></mdui-icon>
+                        <span>将开始批量导入 <b id="batchFileCount">0</b> 个文件</span>
+                    </div>
+
+                    <mdui-button id="startBatchImportBtn" full-width>开始导入</mdui-button>
+                </div>
+
+                <div class="hidden" id="singleBookForm">
+
+                    <h3>书籍信息</h3>
+
+                    <div>
+                        <mdui-text-field variant="outlined" id="bookTitle" class="form-input"
+                            label="书名"></mdui-text-field>
+                    </div>
+
+                    <div>
+                        <mdui-text-field variant="outlined" id="bookAuthor" class="form-input"
+                            label="作者"></mdui-text-field>
+                    </div>
+
+                    <mdui-select label="保存至文件夹" variant="outlined" icon="folder" id="bookFolder">
+                        <mdui-button-icon slot="end-icon" id="newFolderBtn" icon="add"></mdui-button-icon>
+                    </mdui-select>
+
+                    <div class="flex">
+                        <mdui-checkbox id="favoriteOnImport">
+                            <label for="favoriteOnImport">添加到收藏夹</label>
+                        </mdui-checkbox>
+                    </div>
+
+                    <div>
+                        <mdui-button id="importBookSubmit" full-width>保存书籍</mdui-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settingsPage" class="page page-hidden">
+
+            <div class="settings-page-header">
+                <div class="settings-page-title">
+                    <mdui-icon name="settings"></mdui-icon>
+                    <h1>设置</h1>
+                </div>
+            </div>
+
+            <div class="card">
+
+                <!-- Dark Mode Toggle -->
+                <h3>存储</h3>
+                <p>本地缓存可用空间</p>
+                <div class="flex items-center justify-between">
+                    <span id="storageText"></span>
+                    <mdui-linear-progress id="storageProgressBar"></mdui-linear-progress>
+                </div>
+
+                <!-- Dark Mode Toggle -->
+                <h3>外观</h3>
+                <div class="flex items-center justify-between">
+                    <span>深色模式</span>
+                    <mdui-switch id="darkModeToggle"></mdui-switch>
+                </div>
+
+                <!-- Theme Color -->
+                <h3>应用主题色</h3>
+                <p>自定义应用的主色调</p>
+                <div class="color-picker">
+                    <div class="color-option" data-color="#2196f3" style="background-color: #2196f3;"></div>
+                    <div class="color-option" data-color="#00bcd4" style="background-color: #00bcd4;"></div>
+                    <div class="color-option" data-color="#009688" style="background-color: #009688;"></div>
+                    <div class="color-option" data-color="#4caf50" style="background-color: #4caf50;"></div>
+                    <div class="color-option" data-color="#8bc34a" style="background-color: #8bc34a;"></div>
+                    <div class="color-option" data-color="#ff9800" style="background-color: #ff9800;"></div>
+                    <div class="color-option" data-color="#f44336" style="background-color: #f44336;"></div>
+                    <div class="color-option" data-color="#e91e63" style="background-color: #e91e63;"></div>
+                </div>
+
+
+                <h3>章节规则</h3>
+                <p>管理TXT章节识别规则</p>
+
+                <mdui-button id="manageRulesBtn" end-icon="arrow_right" variant="tonal">
+                    <span>管理章节规则</span>
+                </mdui-button>
+
+                <div class="flex import-export-btns">
+                    <mdui-button id="importRulesBtn" end-icon="download" variant="tonal">
+                        <span>导入</span>
+                    </mdui-button>
+                    <mdui-button id="exportRulesBtn" end-icon="upload" variant="tonal">
+                        <span>导出</span>
+                    </mdui-button>
+                </div>
+
+                <h3>数据同步</h3>
+                <p>云端同步阅读数据</p>
+                <mdui-button id="syncDataButton" end-icon="refresh" variant="tonal">
+                    <span>立即同步</span>
+                </mdui-button>
+
+                <h3>个人资料</h3>
+                <p>查看您的个人资料</p>
+
+                <div class="user-profile">
+                    <div class="flex">
+                        <div>
+                            <p id="profileUsername">用户名</p>
+                            <p><mdui-icon name="person"></mdui-icon> 用户名</p>
+                        </div>
+                        <div>
+                            <p id="profileJoinDate">2023-01-01</p>
+                            <p><mdui-icon name="calendar_today"></mdui-icon> 加入时间</p>
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <div>
+                            <p id="totalBooks">0</p>
+                            <p><mdui-icon name="book"></mdui-icon> 书籍总数</p>
+                        </div>
+                        <div>
+                            <p id="totalFavorites">0</p>
+                            <p><mdui-icon name="favorite"></mdui-icon> 收藏数量</p>
+                        </div>
+                        <div>
+                            <p id="totalRules">0</p>
+                            <p><mdui-icon name="rule"></mdui-icon> 规则总数</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>锁定应用</h3>
+                <p>使用密码锁定应用，保护您的隐私</p>
+
+                <div class="flex">
+                    <span>启用应用锁定</span>
+                    <mdui-switch id="lockAppToggle"></mdui-switch>
+                </div>
+                <mdui-button id="lockAppButton" end-icon="lock" variant="tonal">
+                    <span>设置密码</span>
+                </mdui-button>
+                <mdui-button id="lockNowButton" end-icon="lock_person" variant="tonal">
+                    <span>立即锁定</span>
+                </mdui-button>
+
+                <div class="flex">
+                    <span>锁定超时时间</span>
+                    <mdui-slider type="range" id="lockTimeoutSlider" min="1" max="10" step="1" value="3"
+                        nolabel></mdui-slider>
+                    <span id="lockTimeoutValue">3分钟</span>
+                </div>
+
+                <div class="flex">
+                    <span>锁定界面</span>
+                    <mdui-select id="lockDisguiseModeSelect" variant="outlined" icon="lock">
+                        <mdui-menu-item value="standard">标准锁屏</mdui-menu-item>
+                        <mdui-menu-item value="calculator">计算器</mdui-menu-item>
+                    </mdui-select>
+                </div>
+
+                <h3>账号管理</h3>
+                <p>管理您的账号信息</p>
+                <mdui-button id="deleteAccountButton" end-icon="delete" variant="tonal">
+                    <span>删除账号</span>
+                </mdui-button>
+
+                <mdui-button id="logoutButton" end-icon="logout">
+                    <span>退出登录</span>
+                </mdui-button>
+            </div>
+        </div>
+
+        <!-- Chapter Rules Page -->
+        <div id="chapterRulesPage" class="page page-hidden">
+            <div class="chapter-rules-header">
+                <div class="chapter-rules-title">
+                    <mdui-button-icon id="backToSettingsBtn" icon="arrow_back"></mdui-button-icon>
+                    <h1>章节规则</h1>
+                </div>
+                <mdui-button-icon id="addRuleButton" icon="add" variant="filled"></mdui-button-icon>
+            </div>
+
+            <div id="chapterRulesContent" class="chapter-rules-list"></div>
+        </div>
+
+        <!-- 管理员页面 -->
+        <div id="adminPage" class="page page-hidden">
+
+            <div class="admin-header">
+                <div class="admin-title">
+                    <mdui-icon name="people"></mdui-icon>
+                    <h1>管理</h1>
+                </div>
+            </div>
+
+            <!-- 用户管理 -->
+            <div class="card">
+
+                <h3>用户管理</h3>
+                <div id="userList" class="admin-list"></div>
+
+                <h3>系统设置</h3>
+                <div class="flex">
+                    <span>允许注册</span>
+                    <mdui-switch id="allowRegistrationToggle"></mdui-switch>
+                </div>
+
+                <div class="flex">
+                    <span>演示模式</span>
+                    <mdui-switch id="demoModeToggle"></mdui-switch>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Login Page -->
+        <div id="loginPage" class="page page-hidden">
+
+            <form id="loginForm">
+
+                <div class="text-center">
+                    <div class="about-logo"></div>
+                    <h1>Layer</h1>
+                    <p>登录 Layer 账户</p>
+                </div>
+
+                <div>
+                    <mdui-select variant="outlined" id="apiUrlSelect" label="服务器地址" icon="dns"></mdui-select>
+                </div>
+                <div>
+                    <mdui-text-field variant="outlined" id="loginUsername" label="用户名" name="username"
+                        require></mdui-text-field>
+                </div>
+                <div>
+                    <mdui-text-field variant="outlined" type="password" id="loginPassword" label="密码" name="password"
+                        required toggle-password></mdui-text-field>
+                </div>
+                <div>
+                    <mdui-button type="submit" full-width>登录</mdui-button>
+                </div>
+                <div class="text-center">
+                    <a href="#" id="goToRegister">没有账号？去注册</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Register Page -->
+        <div id="registerPage" class="page page-hidden">
+
+            <form id="registerForm">
+
+                <div class="text-center">
+                    <div class="about-logo"></div>
+                    <h1>创建账号</h1>
+                    <p>立刻开始我的 Layer 之旅</p>
+                </div>
+
+                <div>
+                    <mdui-text-field variant="outlined" id="registerUsername" label="用户名" name="username"
+                        required></mdui-text-field>
+                </div>
+                <div>
+                    <mdui-text-field variant="outlined" type="password" id="registerPassword" label="密码" name="password"
+                        required toggle-password></mdui-text-field>
+                </div>
+                <div>
+                    <mdui-text-field variant="outlined" type="password" id="confirmPassword" label="确认密码"
+                        name="confirmPassword" required toggle-password></mdui-text-field>
+                </div>
+                <div>
+                    <mdui-button type="submit" full-width>注册</mdui-button>
+                </div>
+                <div class="text-center">
+                    <a href="#" id="goToLogin">已有账号？去登录</a>
+                </div>
+            </form>
+
+            <div id="registerDisabledMessage" class="hidden">
+                <mdui-icon name="lock"></mdui-icon>
+                <h2>注册已关闭</h2>
+                <p>注册已被管理员关闭，你无法注册新账号</p>
+                <mdui-button-icon id="goBackToLogin" icon="arrow_back"></mdui-button-icon>
+
+            </div>
+        </div>
+
+        <!-- 视频页面 -->
+        <div id="videoPage" class="page page-hidden">
+            <div class="video-header">
+                <div class="video-title">
+                    <mdui-icon name="movie"></mdui-icon>
+                    <h1>影视</h1>
+                </div>
+                <div class="video-actions">
+                    <mdui-button-icon id="manageVideoSourcesBtn" icon="settings_input_component"></mdui-button-icon>
+                    <mdui-button-icon id="addVideoBtn" icon="add" variant="filled"></mdui-button-icon>
+                </div>
+            </div>
+
+            <!-- 视频内容 -->
+            <div class="video-content">
+
+                <div class="sticky-header">
+                    <mdui-text-field id="videoSearchInput" variant="outlined" placeholder="搜索视频..." clearable>
+                        <mdui-icon slot="end-icon" name="search"></mdui-icon>
+                    </mdui-text-field>
+
+                    <div class="video-tabs">
+                        <mdui-chip id="allVideosBtn" selectable icon="movie" selected-icon="movie--outlined"
+                            selected>全部</mdui-chip>
+                        <mdui-chip id="favoriteVideosBtn" selectable icon="favorite"
+                            selected-icon="favorite--outlined">收藏</mdui-chip>
+                        <mdui-chip id="historyVideosBtn" selectable icon="history"
+                            selected-icon="history">最近</mdui-chip>
+                    </div>
+                </div>
+
+                <div id="videoResultsContainer" class="video-results-list">
+                    <!-- 视频列表或搜索结果将在这里显示 -->
+                </div>
+
+
+            </div>
+        </div>
+
+        <!-- 视频播放页面 - 直接播放 -->
+        <div id="videoPlayerPage" class="page page-hidden">
+            <div class="video-player-fullscreen">
+                <div class="video-player-main">
+                    <video id="customVideoPlayer" playsinline webkit-playsinline x5-playsinline
+                        x5-video-player-type="h5" x5-video-player-fullscreen="true" x5-video-orientation="landscape"
+                        controlslist="nodownload">
+                        <source src="" type="video/mp4">
+                        您的浏览器不支持HTML5视频播放。
+                    </video>
+
+                    <div class="video-player-overlay">
+                        <div class="video-player-header">
+                            <mdui-button-icon id="closeVideoBtn" icon="arrow_back"></mdui-button-icon>
+                            <div id="videoPlayerTitle" class="video-player-title">正在播放</div>
+                            <mdui-button-icon id="toggleVideoFavoriteBtn" icon="favorite_border"></mdui-button-icon>
+                        </div>
+
+                        <div class="video-player-actions">
+                            <mdui-button-icon class="play-pause-btn" name="" value="" type="button" variant="standard"
+                                icon="play_arrow"></mdui-button-icon>
+                            <div class="volume-control">
+                                <mdui-button-icon class="volume-icon" name="" value="" type="button" variant="standard"
+                                    icon="volume_up"></mdui-button-icon>
+                                <mdui-slider class="video-volume-slider" min="0" max="1" step="0.01"
+                                    nolabel></mdui-slider>
+                            </div>
+                            <div class="video-speed-control">
+                                <div class="video-speed-current">1.0x</div>
+                                <div class="video-speed-menu">
+                                    <div class="video-speed-item" data-speed="0.5">0.5x</div>
+                                    <div class="video-speed-item" data-speed="0.75">0.75x</div>
+                                    <div class="video-speed-item active" data-speed="1.0">1.0x</div>
+                                    <div class="video-speed-item" data-speed="1.25">1.25x</div>
+                                    <div class="video-speed-item" data-speed="1.5">1.5x</div>
+                                    <div class="video-speed-item" data-speed="2.0">2.0x</div>
+                                </div>
+                            </div>
+                            <mdui-button-icon class="video-fullscreen-btn" name="" value="" type="button"
+                                variant="standard" icon="fullscreen" hover=""></mdui-button-icon>
+                        </div>
+
+
+                        <!-- 进度条 -->
+                        <div class="video-progress-container">
+                            <mdui-slider class="video-progress-slider" min="0" max="100000" step="100"
+                                value="0"></mdui-slider>
+                        </div>
+
+                        <!-- 时间显示 -->
+                        <div class="video-time-display">
+                            <span id="currentTime">00:00</span> / <span id="totalTime">00:00</span>
+                        </div>
+
+                        <!-- 加载指示器 -->
+                        <div class="video-loading-indicator" style="display: none;">
+                            <mdui-circular-progress color="primary"></mdui-circular-progress>
+                        </div>
+
+                        <div class="video-player-info">
+                            <h3 id="videoPlayerInfoTitle">正在播放</h3>
+                            <p id="videoPlayerInfoDetails"></p>
+                        </div>
+
+                        <!-- 剧集抽屉 -->
+                        <div id="episodesDrawer" class="episodes-drawer">
+                            <div class="episodes-drawer-header" onclick="VideoManager.toggleEpisodePanel()">
+                                <span id="currentEpisodeTitle">选择剧集</span>
+                                <mdui-icon name="expand_more"></mdui-icon>
+                            </div>
+                            <div id="episodesListContainer" class="episodes-drawer-content">
+                                <!-- 剧集列表将由JS动态生成 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Iframe播放页面 -->
+        <div id="iframePlayerPage" class="page page-hidden">
+            <div class="iframe-player-container">
+                <div class="iframe-player-header">
+                    <mdui-button-icon id="closeIframeBtn" icon="arrow_back"></mdui-button-icon>
+                    <div id="iframePlayerTitle" class="iframe-player-title">网页视频</div>
+                    <mdui-button-icon id="toggleIframeFavoriteBtn" icon="favorite_border"></mdui-button-icon>
+                </div>
+                <iframe id="iframePlayerFrame" class="iframe-player-frame" src="about:blank" allowfullscreen></iframe>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Bottom Navigation -->
+    <mdui-navigation-bar value="library" class="bottom-nav" label-visibility="labeled">
+        <div class="box">
+            <mdui-navigation-bar-item icon="book" active-icon="book--outlined" value="library" data-page="library"
+                class="nav-item">书库</mdui-navigation-bar-item>
+            <mdui-navigation-bar-item icon="movie" active-icon="movie--outlined" value="video" data-page="video"
+                class="nav-item">影视</mdui-navigation-bar-item>
+            <mdui-navigation-bar-item icon="folder" active-icon="folder--outlined" value="folders" data-page="folders"
+                class="nav-item">文件夹</mdui-navigation-bar-item>
+            <mdui-navigation-bar-item icon="people" active-icon="people--outlined" value="admin" id="adminEntryBtn"
+                data-page="admin" class="nav-item">管理</mdui-navigation-bar-item>
+            <mdui-navigation-bar-item icon="settings" active-icon="settings--outlined" value="settings"
+                data-page="settings" class="nav-item">设置</mdui-navigation-bar-item>
+        </div>
+    </mdui-navigation-bar>
+
+    <script src="src/app.js"></script>
+    <script src="src/video.js"></script>
+</body>
+
+</html>

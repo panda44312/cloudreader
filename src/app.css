@@ -1,0 +1,2806 @@
+@font-face {
+    font-family: 'Material Icons';
+    src: url(./fonts/syl0-zNym6YjUruM-QrEh7-nyTnjDwKNJ_190FjpZIvDmUSVOK7BDB_Qb9vUSzq3wzLK-P0J-V_Zs-QtQth3-jOcbTCVpeRL2w5rwZu2rIelXxc.woff2) format('woff2');
+    font-style: normal;
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: 'Material Icons Outlined';
+    src: url(./fonts/syl0-zNym6YjUruM-QrEh7-nyTnjDwKNJ_190FjpZIvDmUSVOK7BDJ_vb9vUSzq3wzLK-P0J-V_Zs-QtQth3-jOcbTCVpeRL2w5rwZu2rIelXxc.woff2) format('woff2');
+    font-style: normal;
+    font-weight: 400;
+}
+
+/* ===== 1. RESET & BASE STYLES ===== */
+body,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+button,
+input,
+textarea,
+select,
+option,
+ul,
+li {
+    margin: 0;
+    padding: 0;
+}
+
+::selection {
+    background-color: rgb(var(--mdui-color-primary));
+    color: white;
+}
+
+/* ===== 2. UTILITY CLASSES ===== */
+.hidden {
+    display: none !important;
+}
+
+*::part(menu) {
+    overflow: auto;
+    max-height: 50dvh;
+    height: 100%;
+}
+
+mdui-icon,
+mdui-button,
+mdui-chip,
+mdui-button-icon {
+    user-select: none;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.flex {
+    display: flex;
+}
+
+/* ===== 3. LAYOUT & STRUCTURE ===== */
+html, body {
+    font-size: 16px !important;
+}
+
+body {
+    overscroll-behavior: none;
+    touch-action: pan-x pan-y;
+    -webkit-overflow-scrolling: touch;
+    --navigation-bar-height: 5rem;
+    --video-player-bottom: 0rem;
+    --iframe-video-player-bottom: 0rem;
+    padding-bottom: 0px !important;
+}
+
+/* Page Container */
+.page {
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.page-hidden {
+    display: none !important;
+}
+
+.page-visible {
+    position: relative;
+    display: block;
+    width: 100%;
+    min-height: 100dvh;
+    box-sizing: border-box;
+    pointer-events: auto;
+    z-index: 1;
+    margin: auto;
+    padding-bottom: calc(1rem + var(--navigation-bar-height)) !important;
+}
+
+.bottom-nav .box,
+.batch-toolbar .box,
+#readerPage .reader-header .box,
+#readerChaptersPage .chapters-panel-sticky .box,
+#readerSettingsPage .settings-header .box,
+.book-content,
+.reader-bottom-bar .box,
+.chapters-panel-box,
+.settings-box {
+    width: 100%;
+    margin: auto;
+    display: flex;
+}
+
+.book-content,
+.chapters-panel-box,
+.settings-box {
+    display: block;
+}
+
+@media (min-width: 840px) {
+    .page-visible {
+        max-width: 840px;
+    }
+
+    .bottom-nav .box,
+    .batch-toolbar .box,
+    #readerPage .reader-header .box,
+    #readerChaptersPage .chapters-panel-sticky .box,
+    #readerSettingsPage .settings-header .box,
+    .book-content,
+    .reader-bottom-bar .box,
+    .chapters-panel-box,
+    .settings-box {
+        width: 840px;
+    }
+
+}
+
+@media (min-width: 1080px) {
+    .page-visible {
+        max-width: 960px;
+    }
+
+    .bottom-nav .box,
+    .batch-toolbar .box,
+    #readerPage .reader-header .box,
+    #readerChaptersPage .chapters-panel-sticky .box,
+    #readerSettingsPage .settings-header .box,
+    .book-content,
+    .reader-bottom-bar .box,
+    .chapters-panel-box,
+    .settings-box {
+        width: 960px;
+    }
+
+}
+
+/* Sticky Headers */
+.sticky-header {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    padding: 1rem;
+    margin: -1rem -1rem 0 -1rem;
+    background: rgb(var(--mdui-color-surface));
+}
+
+/* ===== 4. COMMON COMPONENTS ===== */
+/* Loading Indicator */
+.loading {
+    overflow: hidden;
+}
+
+#loadingOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(1rem);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 1;
+}
+
+/* 
+#loadingOverlay::before creates an overlay effect behind the loading overlay.
+It covers the entire area of the #loadingOverlay element with a blurred background
+and a semi-transparent color specified by --overlay-bg-color, enhancing the visual
+depth of the loading interface. Positioned absolutely, it ensures no interference 
+with the content layers above it.
+*/
+#loadingOverlay::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    backdrop-filter: blur(1rem);
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: var(--overlay-bg-color);
+    opacity: 0.8;
+}
+
+#loadingOverlay.hidden {
+    display: block !important;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+#loadingOverlay .text-center mdui-circular-progress {
+    margin-bottom: 0.5rem;
+}
+
+#loadingOverlay .text-center #loadingText {
+    width: 200px;
+    max-width: 200px;
+}
+
+#loadingOverlay .text-center .import-progress-container,
+#loadingOverlay .text-center #importProgress {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    width: 200px;
+    max-width: 200px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Search Bar */
+.search-bar {
+    position: relative;
+    margin: 1rem 0;
+    margin-top: 0;
+}
+
+.search-input {
+    width: 100%;
+}
+
+/* Filters */
+.filter-buttons {
+    display: flex;
+    overflow-x: auto;
+    gap: 0.5rem;
+}
+
+.filters-container {
+    display: flex;
+    overflow-x: auto;
+}
+
+.filters-container::-webkit-scrollbar {
+    display: none;
+}
+
+.select-mode-btn {
+    margin-left: auto;
+}
+
+/* Page Headers */
+#libraryPage .library-header,
+#foldersPage .folder-header,
+#importPage .import-header,
+#settingsPage .settings-page-header,
+.chapter-rules-header,
+.admin-header,
+.video-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#libraryPage .library-title,
+#foldersPage .folder-title,
+#importPage .import-title,
+#settingsPage .settings-page-title,
+.chapter-rules-title,
+.admin-title,
+.video-title {
+    display: flex;
+    align-items: center;
+}
+
+#libraryPage .library-title mdui-icon,
+#foldersPage .folder-title mdui-icon,
+#foldersPage .folder-title mdui-button-icon,
+#importPage .import-title mdui-icon,
+#importPage .import-title mdui-button-icon,
+#settingsPage .settings-page-title mdui-icon,
+.admin-title mdui-icon,
+.chapter-rules-title mdui-icon,
+.chapter-rules-title mdui-button-icon,
+.video-title mdui-icon,
+.video-title mdui-button-icon,
+.folder-icon {
+    margin-right: 0.25rem;
+    color: rgb(var(--mdui-color-primary));
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#libraryPage .library-title h1,
+#foldersPage .folder-title h1,
+#importPage .import-title h1,
+#settingsPage .settings-page-title h1,
+.chapter-rules-title h1,
+.admin-title h1,
+.video-title h1 {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: rgb(var(--mdui-color-primary));
+}
+
+/* ===== 5. LIBRARY PAGE ===== */
+#libraryPage .library-header {
+    margin-bottom: 1rem;
+}
+
+#libraryPage .library-actions,
+#foldersPage .folder-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.empty-library {
+    text-align: center;
+    padding: 4rem 0;
+}
+
+.empty-library-content {
+    max-width: 20rem;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+.empty-library-icon {
+    font-size: 4rem;
+    color: rgb(var(--mdui-color-primary));
+    margin-bottom: 1rem;
+}
+
+.empty-library-text {
+    font-size: 1.125rem;
+    color: rgb(var(--mdui-color-primary));
+    margin-bottom: 1.25rem;
+}
+
+/* Book Grid View */
+#bookListSkeleton,
+#bookGridView {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.5rem;
+}
+
+@media (max-width: 600px) {
+
+    #bookListSkeleton,
+    #bookGridView {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.skeleton-item {
+    background: linear-gradient(90deg, #f0f0f071 25%, #e0e0e071 50%, #f0f0f071 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    aspect-ratio: 2 / 3;
+    border-radius: 0.5rem;
+}
+
+.mdui-theme-dark .skeleton-item {
+    background: linear-gradient(90deg, #33333371 25%, #3a3a3a71 50%, #33333371 75%);
+    background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Book Cards */
+.book-card {
+    transition: all 0.2s;
+    position: relative;
+    user-select: none;
+}
+
+.book-cover {
+    position: relative;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
+    aspect-ratio: 2/3;
+    background-size: cover;
+    background-position: center;
+    background-color: rgb(var(--mdui-color-primary));
+}
+
+.mdui-theme-dark .book-cover {
+    background-color: rgb(var(--mdui-color-primary-container));
+}
+
+.book-card:active {
+    transform: scale(0.98);
+}
+
+.book-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background-color: rgb(var(--mdui-color-primary));
+}
+
+.book-cover-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);
+    display: flex;
+    padding: 10px;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.book-title {
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0;
+    line-height: 1.4em;
+    max-height: calc(1.4em * 4);
+    overflow: hidden;
+    width: 100%;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-clamp: 4;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+}
+
+.book-flex {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+}
+
+.book-flex span {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.book-info {
+    padding: 12px;
+}
+
+.book-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+}
+
+.mdui-theme-dark .book-stats {
+    color: #aaa;
+}
+
+/* Book Selection */
+.book-select-checkbox {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    z-index: 20;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background-color: white;
+    transition: all 0.2s;
+    opacity: 0;
+}
+
+.book-card.selectable .book-select-checkbox {
+    opacity: 1;
+}
+
+.mdui-theme-dark .book-select-checkbox {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-color: #374151;
+}
+
+.book-card.selected .book-select-checkbox {
+    background-color: rgb(var(--mdui-color-primary));
+    border-color: rgb(var(--mdui-color-primary));
+}
+
+.book-card.selected .book-select-checkbox:after {
+    content: "check";
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-family: 'Material Icons' !important;
+}
+
+/* Book Actions */
+.book-actions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    pointer-events: none;
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.book-actions mdui-button-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    aspect-ratio: 1 / 1;
+    font-size: 14px;
+    backdrop-filter: blur(1rem);
+}
+
+.book-card:hover .book-actions,
+.book-card.active .book-actions,
+.book-card.selected .book-actions {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Book List View */
+.book-list-item {
+    display: flex;
+    margin-bottom: 1rem;
+    position: relative;
+    user-select: none;
+}
+
+.book-list-cover {
+    width: 68px;
+    aspect-ratio: 2 / 3;
+    border-radius: 0.5rem;
+    margin-right: 0.5rem;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+    background-color: rgb(var(--mdui-color-primary));
+}
+
+.mdui-theme-dark .book-list-cover {
+    background-color: rgb(var(--mdui-color-primary-container));
+}
+
+.book-list-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.book-list-title {
+    font-weight: 500;
+    margin-bottom: 4px;
+    line-height: 1.3;
+    overflow: hidden;
+    width: 100%;
+    max-height: calc(1.3rem * 4);
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-clamp: 4;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+}
+
+.book-list-author {
+    font-size: 12px;
+    color: #666;
+}
+
+.mdui-theme-dark .book-list-author {
+    color: #aaa;
+}
+
+.book-list-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #666;
+}
+
+.mdui-theme-dark .book-list-bottom {
+    color: #aaa;
+}
+
+/* List Selection */
+.book-list-checkbox {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: white;
+    border: 2px solid #ddd;
+    transition: all 0.2s;
+    opacity: 0;
+}
+
+.mdui-theme-dark .book-list-checkbox {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-color: #374151;
+}
+
+.book-list-item.selectable {
+    padding-left: 30px;
+}
+
+.book-list-item.selectable .book-list-checkbox {
+    opacity: 1;
+}
+
+.book-list-item.selectable .book-tag {
+    left: 58px;
+}
+
+.book-list-item.selected .book-list-checkbox {
+    background-color: rgb(var(--mdui-color-primary));
+    border-color: rgb(var(--mdui-color-primary));
+}
+
+.book-list-item.selected .book-list-checkbox:after {
+    content: "check";
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-family: 'Material Icons' !important;
+}
+
+/* Book Tags */
+.book-tag {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: white;
+    backdrop-filter: blur(8px);
+    font-size: 12px;
+    z-index: 10;
+}
+
+.book-tag mdui-icon {
+    font-size: 12px;
+    margin-right: 0.25rem;
+}
+
+.book-list-tag mdui-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+
+.tag-favorite {
+    background-color: rgba(255, 179, 0, 0.4);
+}
+
+.tag-recent {
+    background-color: rgba(0, 191, 165, 0.4);
+}
+
+/* Batch Toolbar */
+.batch-toolbar {
+    position: fixed;
+    bottom: 5rem;
+    left: 0;
+    right: 0;
+    opacity: 0;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, bottom 0.3s ease;
+    pointer-events: none;
+    border-radius: var(--shape-corner) var(--shape-corner) 0 0;
+    background-color: rgba(var(--mdui-color-surface));
+    box-shadow: var(--mdui-elevation-level2);
+}
+
+.batch-toolbar .box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.batch-toolbar[hide] {
+    bottom: 0;
+    opacity: 0;
+    transform: translateY(100%);
+}
+
+.batch-toolbar.visible {
+    opacity: 1;
+    transform: translateY(0);
+    display: flex;
+    pointer-events: auto;
+}
+
+.batch-toolbar #selectedCount {
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+/* Pagination Navigation */
+.pagination-nav {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0 0;
+}
+
+.pagination-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination-numbers {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem;
+}
+
+.pagination-numbers .page-number {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.pagination-numbers .page-number:hover {
+    background-color: rgba(var(--mdui-color-primary), 0.1);
+}
+
+.pagination-numbers .page-number.active {
+    background-color: rgb(var(--mdui-color-primary));
+    color: white;
+}
+
+.pagination-numbers .page-ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    font-size: 0.875rem;
+    opacity: 0.7;
+}
+
+.pagination-numbers .page-ellipsis::after {
+    content: "...";
+    margin-left: 0.125rem;
+    margin-right: 0.125rem;
+}
+
+@media (max-width: 400px) {
+    .pagination-numbers .page-ellipsis::after {
+        content: "";
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+.pagination-info {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: rgba(var(--mdui-color-on-surface), 0.6);
+}
+
+.mdui-theme-dark .pagination-info {
+    color: rgba(var(--mdui-color-on-surface), 0.7);
+}
+
+/* ===== 6. FOLDERS PAGE ===== */
+#currentFolderInfo {
+    margin-bottom: 1rem;
+}
+
+.folder-breadcrumb {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb-link {
+    color: rgb(var(--mdui-color-primary));
+    text-decoration: none;
+}
+
+.breadcrumb-separator {
+    margin: 0 8px;
+    color: #666;
+}
+
+.mdui-theme-dark .breadcrumb-separator {
+    color: #aaa;
+}
+
+.folder-item,
+#chapterRulesContent .card {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-radius: 0.5rem;
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    flex-wrap: wrap;
+}
+
+.folder-item:hover,
+#chapterRulesContent .card:hover {
+    background-color: rgb(var(--mdui-color-secondary-container));
+}
+
+.folder-info {
+    flex: 1;
+}
+
+.folder-count {
+    font-size: 0.75rem;
+    color: #666;
+}
+
+.mdui-theme-dark .folder-count {
+    color: #aaa;
+}
+
+.folder-header,
+.import-header,
+.settings-page-header,
+.chapter-rules-header,
+.admin-header,
+.apps-header,
+.apps-view-header {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: rgba(var(--mdui-color-background));
+    width: 100%;
+    padding: 1rem;
+    margin: -1rem -1rem 0 -1rem;
+}
+
+/* ===== 7. READER PAGE ===== */
+.reader-page,
+#readerChaptersPage,
+#readerSettingsPage {
+    padding-top: 1rem !important;
+    padding-bottom: 0rem !important;
+    max-width: 100% !important;
+}
+
+#readerChaptersPage,
+#readerSettingsPage {
+    padding-bottom: 1rem !important;
+}
+
+#readerPage .reader-header,
+#readerChaptersPage .chapters-panel-sticky,
+#readerSettingsPage .settings-header {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    z-index: 2005;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    background: var(--bg-color);
+}
+
+#readerPage .reader-header .box,
+#readerChaptersPage .chapters-panel-sticky .box,
+#readerSettingsPage .settings-header .box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mdui-theme-dark #readerPage .reader-header,
+.mdui-theme-dark #readerChaptersPage .chapters-panel-sticky,
+.mdui-theme-dark #readerSettingsPage .settings-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#readerChaptersPage .chapters-panel-sticky .box,
+#readerSettingsPage .settings-header .box {
+    justify-content: flex-start;
+    gap: 0.25rem;
+}
+
+.reader-container {
+    min-height: calc(100dvh - 2rem);
+}
+
+.book-content {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+}
+
+.book-content h1.chapter-title {
+    font-size: calc(var(--font-size) * 1.2);
+    line-height: calc(var(--line-spacing) * 1.2);
+    color: var(--font-color);
+    transition: color var(--transition-speed);
+    font-family: var(--font-family);
+    margin-bottom: var(--paragraph-spacing);
+}
+
+.book-content p {
+    font-size: var(--font-size);
+    line-height: var(--line-spacing);
+    color: var(--font-color);
+    transition: color var(--transition-speed);
+    font-family: var(--font-family);
+    text-indent: var(--first-line-indent);
+    margin-bottom: var(--paragraph-spacing);
+}
+
+.reader-bottom-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2005;
+    font-size: 12px;
+    gap: 0.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    background: var(--bg-color);
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.reader-bottom-bar .box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.mdui-theme-dark #readerPage .reader-bottom-bar {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+
+
+.reader-bottom-bar .box>div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.reader-bottom-bar .box>div #prevChapterBtn,
+.reader-bottom-bar .box>div #nextChapterBtn {
+    position: relative;
+    overflow: hidden;
+    width: 33.33333333%;
+}
+
+.reader-bottom-bar mdui-icon,
+.reader-header mdui-icon,
+.reader-header mdui-button-icon,
+.chapters-panel-sticky mdui-button-icon,
+.chapters-panel-sticky mdui-icon,
+.chapters-panel-sticky h3,
+.settings-header mdui-icon,
+.settings-header mdui-button-icon,
+.settings-header h3,
+.settings-box,
+#importPage h3 {
+    font-size: 16px !important;
+}
+
+/* Chapters Panel */
+#readerChaptersPage {
+    padding-bottom: 1rem !important;
+}
+
+.mdui-theme-dark #readerChaptersPage .chapters-panel-sticky,
+.mdui-theme-dark #readerSettingsPage .settings-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#readerChaptersPage mdui-text-field,
+#readerSettingsPage mdui-text-field {
+    width: 100%;
+    height: 3rem;
+    margin: 1rem 0;
+}
+
+
+#readerChaptersPage .chapters-panel-box>ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+}
+
+#readerChaptersPage .chapters-panel-box>ul li {
+    line-height: 2em;
+    padding: 0.5rem 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    position: relative;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+}
+
+#readerChaptersPage .chapters-panel-box>ul li:hover {
+    background-color: rgb(var(--mdui-color-secondary-container), 0.8)
+}
+
+#readerChaptersPage .chapters-panel-box>ul li.active {
+    background-color: rgb(var(--mdui-color-secondary-container), 0.8)
+}
+
+#readerChaptersPage .chapters-panel-box>ul li.active::after {
+    content: "";
+    background-color: rgb(var(--mdui-color-primary));
+    width: 0.25rem;
+    height: 1rem;
+    border-radius: 0.5rem;
+    position: absolute;
+    left: -0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#readerChaptersPage .chapters-panel-box>ul li .chapter-cached-indicator {
+    margin-left: auto;
+}
+
+#readerSettingsPage .settings-box {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#readerSettingsPage .flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+#readerSettingsPage .flex mdui-slider {
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+}
+
+#readerSettingsPage .settings-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 0;
+}
+
+#readerSettingsPage .color-theme {
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s;
+    font-size: 12px;
+}
+
+#readerSettingsPage .color-theme a {
+    text-align: center;
+    color: inherit;
+    font-size: 12px;
+    line-height: 12px;
+    margin-top: 5px;
+    text-decoration: none;
+}
+
+#readerSettingsPage .color-theme:active {
+    transform: scale(0.95);
+}
+
+#readerSettingsPage .color-theme.active {
+    border-color: var(--primary-color);
+}
+
+#readerSettingsPage .color-theme-preview {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-bottom: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 12px;
+}
+
+.mdui-theme-dark #readerSettingsPage .color-theme-preview {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#readerSettingsPage .form-input {
+    font-family: var(--font-family);
+}
+
+
+
+/* ===== 8. THEMES ===== */
+.theme-default {
+    --bg-color: rgb(var(--mdui-color-background));
+    --font-color: rgb(var(--mdui-color-on-background));
+}
+
+
+.theme-eyecare {
+    --bg-color: #E3EDCD;
+    --font-color: #333333;
+}
+
+.mdui-theme-dark.theme-eyecare {
+    --bg-color: #0a140f;
+    --font-color: #E3EDCD;
+}
+
+.mdui-theme-dark.theme-warm {
+    --bg-color: #2D2019;
+    --font-color: #E0C9A6;
+}
+
+.theme-paper {
+    --bg-color: #F7EEE3;
+    --font-color: #473C33;
+}
+
+.mdui-theme-dark.theme-paper {
+    --bg-color: #232121;
+    --font-color: #D1C4B1;
+}
+
+.theme-blue {
+    --bg-color: #e9eff5;
+    --font-color: #1f282b;
+}
+
+.mdui-theme-dark.theme-blue {
+    --bg-color: #1f282b;
+    --font-color: #e9eff5;
+}
+
+.theme-paper-image {
+    --bg-color: #F7EEE3;
+    --bg-image: url('./bg/bg1-b.jpg');
+    --font-color: #473C33;
+}
+
+@media (max-width: 840px) {
+    .theme-paper-image {
+        --bg-image: url('./bg/bg1-m.jpg');
+    }
+}
+
+.mdui-theme-dark.theme-paper-image {
+    --bg-color: #232121;
+}
+
+.theme-watercolor-image {
+    --bg-color: #fefdfb;
+    --bg-image: url('./bg/bg2-b.jpg');
+    --font-color: #333e47;
+}
+
+.mdui-theme-dark.theme-watercolor-image {
+    --bg-color: #212123;
+}
+
+@media (max-width: 840px) {
+    .theme-watercolor-image {
+        --bg-image: url('./bg/bg2-m.jpg');
+    }
+}
+
+.theme-ink-image {
+    --bg-color: #f3f3f3;
+    --bg-image: url('./bg/bg3.jpg');
+    --font-color: #191a1a;
+}
+
+.mdui-theme-dark.theme-ink-image {
+    --bg-color: #212123;
+}
+
+.theme-paper-image #readerPage.page-visible .reader-header,
+.theme-watercolor-image #readerPage.page-visible .reader-header,
+.theme-ink-image #readerPage.page-visible .reader-header {
+    border-bottom: none!important;
+}
+
+.theme-paper-image #readerPage.page-visible .reader-bottom-bar,
+.theme-watercolor-image #readerPage.page-visible .reader-bottom-bar,
+.theme-ink-image #readerPage.page-visible .reader-bottom-bar {
+    border-top: none !important;
+}
+
+.theme-paper-image #readerPage.page-visible .reader-header *,
+.theme-paper-image #readerPage.page-visible .reader-bottom-bar *,
+.theme-watercolor-image #readerPage.page-visible .reader-header *,
+.theme-watercolor-image #readerPage.page-visible .reader-bottom-bar *,
+.theme-ink-image #readerPage.page-visible .reader-header *,
+.theme-ink-image #readerPage.page-visible .reader-bottom-bar * {
+    color: var(--font-color) !important;
+}
+
+html.reader-open.theme-paper-image body::before,
+html.reader-open.theme-watercolor-image body::before,
+html.reader-open.theme-ink-image body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background-image: var(--bg-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+}
+
+.theme-paper-image #readerPage.page-visible .reader-header,
+.theme-paper-image #readerPage.page-visible .reader-bottom-bar,
+.theme-watercolor-image #readerPage.page-visible .reader-header,
+.theme-watercolor-image #readerPage.page-visible .reader-bottom-bar,
+.theme-ink-image #readerPage.page-visible .reader-header,
+.theme-ink-image #readerPage.page-visible .reader-bottom-bar {
+    background: none;
+    transition: all 0.3s;
+}
+
+.theme-paper-image #readerPage.page-visible .reader-header.bg,
+.theme-paper-image #readerPage.page-visible .reader-bottom-bar.bg,
+.theme-watercolor-image #readerPage.page-visible .reader-header.bg,
+.theme-watercolor-image #readerPage.page-visible .reader-bottom-bar.bg,
+.theme-ink-image #readerPage.page-visible .reader-header.bg,
+.theme-ink-image #readerPage.page-visible .reader-bottom-bar.bg {
+    backdrop-filter: blur(0.1rem);
+}
+
+/* ===== 9. LOGIN/REGISTER PAGES ===== */
+#loginPage,
+#registerPage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2010;
+    background-color: rgb(var(--mdui-color-background));
+    width: 100%;
+    padding-bottom: 1rem !important;
+}
+
+#loginPage .text-center h1,
+#registerPage .text-center h1 {
+    margin-bottom: 0.25rem;
+}
+
+#loginPage .text-center a,
+#registerPage .text-center a {
+    text-decoration: none;
+    color: rgb(var(--mdui-color-primary));
+}
+
+#loginForm,
+#registerForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1rem 0;
+    width: 100%;
+    max-width: 400px;
+}
+
+.about-logo {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    font-weight: bold;
+    background-image: url('./app.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+#registerDisabledMessage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+    padding: 1rem;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+#registerDisabledMessage mdui-icon {
+    font-size: 40px;
+}
+
+#registerDisabledMessage h2 {
+    font-size: 20px;
+}
+
+#registerDisabledMessage p {
+    font-size: 16px;
+}
+
+/* ===== 10. IMPORT PAGE ===== */
+#importPage,
+#chapterRulesPage {
+    z-index: 2010;
+    background-color: rgb(var(--mdui-color-background));
+    width: 100%;
+    padding-bottom: 1rem !important;
+}
+
+#importPage .card,
+#importPage #singleBookForm,
+#importPage #batchImportOptions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#importPage .card .flex {
+    display: flex;
+}
+
+#importPage .book-file-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 8rem;
+    padding: 1.5rem 1rem;
+    border: 2px dashed #d1d5db;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 0.875rem;
+}
+
+#importPage .book-file-dropzone mdui-icon {
+    margin-bottom: 0.5rem;
+}
+
+#importPage .book-file-dropzone.border-primary {
+    border-color: rgb(var(--mdui-color-primary));
+}
+
+.mdui-theme-dark #importPage .book-file-dropzone {
+    background-color: #242424;
+    border-color: #6b7280;
+}
+
+#importPage .card .flex mdui-button-icon,
+#importPage .card .flex mdui-button {
+    margin-left: 0.5rem;
+}
+
+#importPage .card .flex mdui-icon {
+    margin-right: 0.5rem;
+}
+
+/* ===== 11. SETTINGS PAGE ===== */
+#settingsPage .card,
+#adminPage .card {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+    gap: 1rem;
+}
+
+#settingsPage .card h3,
+#adminPage .card h3 {
+    font-size: 16px !important;
+}
+
+#settingsPage .card .flex,
+#adminPage .card .flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#settingsPage .card .flex span,
+#adminPage .card .flex span {
+    width: max-content;
+    flex-shrink: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#settingsPage .card .flex span:first-child,
+#adminPage .card .flex span:first-child {
+    padding-right: 1rem;
+}
+
+.import-export-btns {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.import-export-btns>mdui-button {
+    display: inline-block;
+    width: calc(50% - 0.25rem);
+}
+
+#settingsPage .card>mdui-button,
+#settingsPage #logoutButton {
+    width: 100%;
+}
+
+#settingsPage .card>mdui-button::part(button),
+#settingsPage #logoutButton::part(button) {
+    display: inline-flex;
+    text-align: left;
+    justify-content: flex-start;
+}
+
+#settingsPage .card>mdui-button::part(end-icon),
+#settingsPage #logoutButton::part(end-icon) {
+    margin-left: auto;
+}
+
+.admin-list>.flex>.flex:first-child {
+    width: 100%;
+}
+
+.admin-list>.flex>.flex:last-child {
+    margin-left: 0.5rem;
+}
+
+/* Color Picker */
+.color-picker {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.color-option {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    position: relative;
+    justify-self: center;
+}
+
+.mdui-theme-dark .color-option {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.color-option.active::after {
+    content: "check";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Material Icons';
+    color: #fff;
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+}
+
+/* ===== 12. DIALOGS & FORMS ===== */
+mdui-dialog .modal-body>* {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 0.5rem 0;
+}
+
+mdui-dialog .modal-body .flex {
+    display: flex;
+    align-items: center;
+}
+
+mdui-dialog .modal-body p {
+    font-size: 16px;
+}
+
+mdui-dialog .modal-body mdui-tabs::part(container) {
+    background-color: inherit;
+}
+
+mdui-dialog .modal-body mdui-tab-panel[active] {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 1rem;
+}
+
+/* ===== 13. LOCK SCREEN ===== */
+.offline::before {
+    content: "您已离线";
+    width: 100%;
+    height: 1.5rem;
+    background: rgba(var(--mdui-color-error), 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.locked,
+.loading {
+    overflow: hidden;
+}
+
+.locked .app-container,
+.locked .progress-bar,
+.locked .bottom-nav,
+.locked .batch-toolbar,
+.locked #loadingOverlay {
+    visibility: hidden;
+}
+
+#lockScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgb(var(--mdui-color-background));
+    z-index: 2147483647;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+}
+
+#lockScreen.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.locked #standardLockScreen,
+.locked #disguiseLockScreen {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(var(--mdui-color-background));
+}
+
+.locked #disguiseLockScreen {
+    background-color: #f5f5f5;
+}
+
+.locked #disguiseLockScreen.hidden {
+    display: none;
+}
+
+.locked #disguiseFrame {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.locked #lockScreen .lock-icon {
+    color: rgb(var(--mdui-color-primary));
+    margin-bottom: 2rem;
+}
+
+.locked #lockScreen .lock-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.locked #lockScreen .password-container {
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 1.5rem;
+}
+
+.locked #lockScreen .password-dots {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.locked #lockScreen .password-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: rgba(var(--mdui-color-on-surface), 0.2);
+    margin: 0 8px;
+}
+
+.locked #lockScreen .password-dot.filled {
+    background-color: rgb(var(--mdui-color-primary));
+}
+
+.locked #lockScreen .numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    width: 100%;
+    max-width: 250px;
+    justify-items: center;
+}
+
+.locked #lockScreen .numpad-button {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    background-color: rgba(var(--mdui-color-on-surface), 0.05);
+    cursor: pointer;
+    user-select: none;
+}
+
+.locked #lockScreen .numpad-button:active {
+    background-color: rgba(var(--mdui-color-on-surface), 0.15);
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-5px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(5px);
+    }
+}
+
+/* ===== 14. USER PROFILE ===== */
+.user-profile {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.user-profile>.flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.user-profile>.flex>div {
+    border-radius: 0.5rem;
+    background-color: rgb(var(--mdui-color-secondary-container));
+    padding: 0.5rem;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-profile>.flex>div>*:nth-child(1) {
+    font-size: 0.95rem;
+}
+
+.user-profile>.flex>div>*:nth-child(2) {
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+}
+
+.user-profile>.flex>div>*:nth-child(2) mdui-icon {
+    margin-right: 0.25rem;
+    font-size: 1em;
+}
+
+/* ===== 15. CHAPTER RULES ===== */
+#chapterRulesContent {
+    display: flex;
+    flex-direction: column;
+}
+
+#chapterRulesContent .card>div {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+#adminPage .card .flex {
+    height: 2.5rem;
+}
+
+#adminPage .card .flex .flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+/* ===== 16. iphone 设备样式 ===== */
+.pwa-full-screen {
+    --navigation-bar-height: 6rem;
+    --video-player-bottom: 1.5rem;
+    --iframe-video-player-bottom: 1.5rem;
+}
+
+.pwa-full-screen mdui-navigation-bar {
+    height: var(--navigation-bar-height);
+    padding-bottom: 1rem !important;
+}
+
+.pwa-full-screen .reader-bottom-bar {
+    padding-bottom: 1rem !important;
+}
+
+.pwa-full-screen .save-settings-box {
+    padding-bottom: 1rem !important;
+}
+
+/* 视频模块核心样式 */
+.video-player-main mdui-button-icon {
+    color: white;
+}
+
+/* 视频页面样式 */
+.video-header {
+    margin-bottom: 1rem;
+}
+
+.video-title {
+    display: flex;
+    align-items: center;
+}
+
+.video-title mdui-icon {
+    font-size: 1.5rem;
+}
+
+.video-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.video-content {}
+
+.video-tabs {
+    display: flex;
+    margin-top: 1rem;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.video-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+/* 搜索结果标题 */
+.search-results-title {
+    margin: 1rem 0;
+}
+
+.search-results-title h2 {
+    font-size: 1.2rem;
+    margin: 0;
+    font-weight: 500;
+}
+
+.search-results-subtitle {
+    font-size: 0.8rem;
+    color: #666;
+    margin: 0.25rem 0 0 0;
+    opacity: 0.8;
+}
+
+.mdui-theme-dark .search-results-subtitle {
+    color: #aaa;
+}
+
+/* 视频网格和卡片 */
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.5rem;
+}
+
+@media (max-width: 600px) {
+    .video-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.video-card {
+    position: relative;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    cursor: pointer;
+    min-height: 6rem;
+}
+
+.video-card-cover {
+    position: relative;
+    width: 100%;
+    min-height: 6rem;
+    height: auto;
+    /* 改为自动高度 */
+    padding-bottom: 0;
+    /* 移除固定比例 */
+    overflow: hidden;
+    display: flex;
+    background-color: rgb(var(--mdui-color-primary));
+}
+
+.video-card-default-icon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(var(--mdui-color-surface-container), 0.7);
+}
+
+.video-card-default-icon mdui-icon {
+    font-size: 48px;
+    color: rgb(var(--mdui-color-primary));
+}
+
+.video-card-cover img {
+    width: 100%;
+    height: auto;
+    /* 高度随图片自然变化 */
+    object-fit: cover;
+    position: relative;
+    /* 不要绝对定位，否则不会撑起父容器 */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.video-card-cover img.loaded {
+    transition: transform 0.3s ease, opacity 0.5s ease;
+    animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.video-card-actions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    flex-direction: column;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.video-card:hover .video-card-actions {
+    opacity: 1;
+}
+
+.video-card-actions mdui-button-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    aspect-ratio: 1 / 1;
+    font-size: 14px;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(1rem);
+    margin-bottom: 0.25rem;
+    color: white;
+}
+
+.video-card-info {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.75rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 25%, transparent 100%);
+    color: white;
+}
+
+.video-card-title {
+    width: 100%;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin: 0 0 0.25rem 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+}
+
+.video-card-details {
+    width: 100%;
+    display: flex;
+    font-size: 0.75rem;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.video-card-source,
+.video-card-year,
+.video-card-date {
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.video-card-badge {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    backdrop-filter: blur(2px);
+    z-index: 2;
+}
+
+/* 添加视频表单 */
+.add-video-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.add-video-types {
+    display: flex;
+    gap: 1rem;
+}
+
+.add-video-type {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    background-color: rgb(var(--mdui-color-surface-container-lowest));
+    cursor: pointer;
+    flex: 1;
+    transition: background-color 0.2s ease;
+}
+
+.add-video-type.active {
+    background-color: rgb(var(--mdui-color-primary-container));
+    color: rgb(var(--mdui-color-on-primary-container));
+}
+
+.add-video-type mdui-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.form-input {
+    width: 100%;
+}
+
+.hidden {
+    display: none;
+}
+
+/* 视频源管理 */
+.video-sources-list-container {
+    max-height: 300px;
+    overflow-y: auto;
+    border-radius: 0.5rem;
+    margin: 0 !important;
+    margin-bottom: 1rem !important;
+}
+
+.video-sources-list-container .flex {
+    gap: 0.5rem;
+    align-items: stretch;
+    flex-direction: column;
+}
+
+
+/* 视频播放器 */
+.video-player-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background-color: #000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.video-player-main {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    background-color: #000;
+    overflow: hidden;
+}
+
+.video-player-main video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 视频播放器过渡动画 */
+.video-player-main video.changing-episode {
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+}
+
+.video-player-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.8) 0%,
+            transparent 15%,
+            transparent 75%,
+            rgba(0, 0, 0, 0.8) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+/* 添加JS控制的显示样式 */
+.video-player-main.controls-visible .video-player-overlay {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* 控件交互时不应隐藏 */
+.video-player-actions:hover~.video-player-overlay,
+.video-progress-container:hover~.video-player-overlay,
+.video-player-header:hover~.video-player-overlay,
+.episodes-drawer:hover~.video-player-overlay {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* 在控制器可见状态下禁用视频点击事件,避免连续点击 */
+.video-player-main.controls-visible>video {
+    pointer-events: none;
+}
+
+.video-player-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    z-index: 11;
+    pointer-events: auto;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.video-player-title {
+    color: white;
+    margin-left: 1rem;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.video-player-actions {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+    z-index: 10;
+    pointer-events: auto;
+}
+
+.video-player-info {
+    position: absolute;
+    bottom: calc(var(--video-player-bottom) + 5rem);
+    left: 1rem;
+    color: white;
+    max-width: 80%;
+    z-index: 10;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.video-player-info h3 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.video-player-info p {
+    margin: 0;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+/* 当没有集数时，视频信息区域可以放在更底部 */
+.video-player-info.no-episodes {
+    bottom: calc(var(--video-player-bottom) + 2rem);
+}
+
+/* 进度条和时间显示 */
+.video-progress-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--video-player-bottom));
+    height: 2rem;
+    background-color: transparent;
+    cursor: pointer;
+    z-index: 20;
+    transition: height 0.2s ease, bottom 0.2s ease;
+}
+
+.video-progress-slider {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    --buffer-progress: 0%;
+    /* 缓冲进度CSS变量 */
+    position: relative;
+    opacity: 0.8;
+}
+
+.video-progress-slider::part(track-active) {
+    border-radius: var(--mdui-shape-corner-full);
+}
+
+.video-progress-slider::part(handle) {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    zoom: 45%;
+}
+
+.video-progress-slider:hover::part(handle) {
+    opacity: 1;
+}
+
+.video-progress-slider:hover::part(label) {
+    zoom: 155%;
+}
+
+/* 视频预览容器 */
+.video-time-display {
+    position: absolute;
+    bottom: calc(var(--video-player-bottom) + 2rem);
+    right: 1rem;
+    color: white;
+    font-size: 0.85rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+    z-index: 10;
+}
+
+/* 播放控件 */
+.play-pause-btn {
+    --mdui-button-icon-icon-size: 1.75rem;
+    background-color: rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(1rem);
+}
+
+.volume-control,
+.video-speed-control {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 20;
+    border-radius: 100rem;
+    transition: height 0.3s ease, background-color 0.3s ease;
+    background-color: rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(1rem);
+    width: 2.5rem;
+    height: 2.5rem;
+    overflow: hidden;
+}
+
+.volume-control:hover,
+.video-speed-control:hover {
+    height: 12.5rem;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.volume-icon {
+    --mdui-button-icon-icon-size: 1.5rem;
+}
+
+.video-volume-slider {
+    opacity: 0;
+    width: 0;
+    pointer-events: none;
+}
+
+.volume-control:hover .video-volume-slider {
+    width: 10rem;
+    opacity: 1;
+    pointer-events: auto;
+    animation: all 0.2s ease;
+    transform: rotate(-90deg);
+    margin-top: 3.5rem;
+    margin-bottom: 3.5rem;
+    margin-left: -4rem;
+    margin-right: -4rem;
+}
+
+/* 播放速度控制 */
+.video-speed-control:hover {
+    height: 12.5rem;
+}
+
+.video-speed-current {
+    width: 100%;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 500;
+    height: 2.5rem;
+    line-height: 2.5rem;
+    text-align: center;
+}
+
+.video-speed-menu {
+    width: 100%;
+}
+
+.video-speed-item {
+    width: 100%;
+    font-size: 0.8rem;
+    height: 1.666666667rem;
+    line-height: 1.666666667rem;
+    color: white;
+    opacity: 0.8;
+    cursor: pointer;
+    text-align: center;
+    transition: opacity 0.2s ease;
+    border-radius: 0.5rem;
+}
+
+.video-speed-item:hover {
+    opacity: 1;
+}
+
+.video-speed-item.active {
+    color: rgb(var(--mdui-color-primary));
+    font-weight: 500;
+}
+
+/* 全屏按钮 */
+.video-fullscreen-btn {
+    --mdui-button-icon-icon-size: 1.5rem;
+    background-color: rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(1rem);
+}
+
+/* 加载指示器 */
+.video-loading-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 15;
+    display: flex;
+}
+
+/* 剧集抽屉 */
+.episodes-drawer {
+    position: absolute;
+    bottom: calc(var(--video-player-bottom) + 2rem);
+    left: 0.5rem;
+    height: 2.5rem;
+    border-radius: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    z-index: 15;
+    pointer-events: auto;
+}
+
+.episodes-drawer.expanded {
+    max-width: calc(100% - 2rem);
+    width: 20rem;
+    min-width: 10rem;
+    max-height: calc(45% - 2rem);
+    height: 14rem;
+    min-height: 2rem;
+    border-radius: 1rem;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(1rem);
+}
+
+.episodes-drawer-header {
+    display: flex;
+    align-items: center;
+    padding: 0 0.5rem;
+    height: 2.5rem;
+    cursor: pointer;
+    color: white;
+    font-weight: 500;
+    user-select: none;
+}
+
+.episodes-drawer-header mdui-icon {
+    transition: transform 0.3s ease;
+    margin-left: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.episodes-drawer.expanded .episodes-drawer-header mdui-icon {
+    transform: rotate(180deg);
+}
+
+.episodes-drawer-content {
+    flex: 1;
+    overflow-y: auto;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-bottom: 0.5rem;
+    touch-action: pan-y;
+    scrollbar-width: thin;
+    display: none;
+    height: 0;
+    opacity: 0;
+}
+
+@keyframes showEpisodesContent {
+    0% {
+        height: 0;
+        opacity: 0;
+    }
+
+    100% {
+        height: auto;
+        opacity: 1;
+        animation-fill-mode: forwards;
+    }
+}
+
+.episodes-drawer.expanded .episodes-drawer-content {
+    display: flex;
+    animation: showEpisodesContent 0.3s ease forwards;
+}
+
+.episode-button {
+    width: calc(33.33333333333% - 1.333333333333333rem);
+    padding: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.episode-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.episode-button.playing {
+    background-color: rgb(var(--mdui-color-primary));
+    font-weight: 500;
+}
+
+/* 通知吐司 */
+.video-toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background-color: rgba(0, 0, 0, 0.15);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 2rem;
+    font-size: 0.9rem;
+    z-index: 9999;
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    pointer-events: none;
+    backdrop-filter: blur(1rem);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.video-toast.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* iframe播放器 */
+.iframe-player-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background-color: #000;
+    display: flex;
+    flex-direction: column;
+}
+
+.iframe-player-header {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background-color: #000;
+    color: white;
+}
+
+.iframe-player-title {
+    margin-left: 1rem;
+    font-weight: 500;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.iframe-player-header mdui-button-icon {
+    color: white;
+}
+
+.iframe-player-frame {
+    flex: 1;
+    width: 100%;
+    height: calc(100% - var(--iframe-video-player-bottom));
+    max-height: calc(100% - var(--iframe-video-player-bottom));
+    border: none;
+}
+
+/* 空状态 */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    text-align: center;
+}
+
+.empty-state p {
+    margin: 0 0 1rem 0;
+    color: rgba(var(--mdui-color-on-surface), 0.6);
+}
+
+.empty-state mdui-button {
+    margin-top: 0.5rem;
+}
+
+/* 处理iOS webkit 控件问题 */
+.video-player-main video::-webkit-media-controls {
+    display: none !important;
+}
+
+.video-player-main video::-webkit-media-controls-enclosure {
+    display: none !important;
+}
+
+.video-player-main video::-webkit-media-controls-panel {
+    display: none !important;
+}
+
+.video-player-main video::-webkit-media-controls-overlay-play-button {
+    display: none !important;
+}
+
+video::-webkit-media-controls-play-button,
+video::-webkit-media-controls-start-playback-button {
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    display: none !important;
+}
+
+/* iOS补充样式 */
+@supports (-webkit-touch-callout: none) {
+    .video-player-main video {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* 添加透明覆盖层阻止默认控件 */
+    .video-player-main::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 2;
+        pointer-events: none;
+    }
+}
+
+/* 视频源列表样式 */
+.source-list {
+    padding: 0;
+}
+
+.source-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: rgb(var(--mdui-color-surface-container-lowest));
+    border-radius: 0.5rem;
+    width: calc(100% - 2rem);
+}
+
+.source-list-content {
+    flex: 1;
+    overflow: hidden;
+}
+
+.source-name {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.source-url {
+    font-size: 0.85rem;
+    color: rgba(var(--mdui-color-on-surface), 0.7);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0.25rem;
+}
+
+.source-filter-info {
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    color: rgba(var(--mdui-color-on-surface), 0.7);
+    line-height: 1.4;
+}
+
+.filter-badge {
+    display: inline-block;
+    background-color: rgb(var(--mdui-color-secondary-container));
+    color: rgb(var(--mdui-color-on-secondary-container));
+    padding: 0.1rem 0.4rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    margin-right: 0.25rem;
+}
+
+.source-list-actions {
+    display: flex;
+    gap: 0.25rem;
+    margin-left: 0.5rem;
+}
+
+
+@media (max-width: 600px) {
+
+    .source-list-item {
+        justify-content: space-between;
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .source-list-actions {
+        margin-left: 0;
+        margin-top: 0.25rem;
+        margin-left: auto;
+    }
+}
+
+/* 筛选设置表单样式 */
+.filter-settings-form {
+    padding: 0.5rem 0;
+}
+
+.filter-section {
+    margin-bottom: 1.5rem;
+}
+
+.filter-section h3 {
+    font-size: 1rem;
+    margin: 0 0 0.75rem 0;
+    font-weight: 500;
+}
+
+.filter-mode-selector {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.filter-values-container {
+    margin-bottom: 1rem;
+}
+
+.filter-help-text {
+    font-size: 0.8rem;
+    color: rgba(var(--mdui-color-on-surface), 0.6);
+    line-height: 1.4;
+}
+
+/* API搜索相关样式 */
+.api-search-container {
+    display: flex;
+}
+
+.api-search-results-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.api-search-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+}
+
+.api-search-added-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: rgb(var(--mdui-color-primary));
+    color: white;
+    border-radius: 0 8px 0 8px;
+    padding: 0.25rem;
+    z-index: 10;
+}
+
+.api-search-added-badge mdui-icon {
+    font-size: 1.25rem;
+}
+
+#apiSearchInputs,
+#normalVideoInputs {
+    margin: 0;
+}
+
+#add-custom-video-modal::part(panel) {
+    width: 100%;
+}

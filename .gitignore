@@ -1,0 +1,5 @@
+/worker/node_modules
+/worker/.wrangler
+/worker/wrangler.toml
+/config.js
+/api.js

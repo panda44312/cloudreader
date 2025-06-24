@@ -1,0 +1,87 @@
+{
+    "name": "Layer",
+    "short_name": "Layer",
+    "description": "Layer for PWA",
+    "id": "com.reader",
+    "start_url": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "app-pwa.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "lang": "zh-CN",
+    "dir": "ltr",
+    "prefer_related_applications": false,
+    "related_applications": [],
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
+    "launch_handler": {
+        "client_mode": "focus-existing"
+    },
+    "shortcuts": [
+        {
+            "name": "书库",
+            "url": "/#library",
+            "description": "书库",
+            "icons": [
+                {
+                    "src": "icons/book.svg",
+                    "type": "image/svg+xml",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "导入书籍",
+            "url": "/#import",
+            "description": "导入书籍",
+            "icons": [
+                {
+                    "src": "icons/upload.svg",
+                    "type": "image/svg+xml",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "视频",
+            "url": "/#video",
+            "description": "视频",
+            "icons": [
+                {
+                    "src": "icons/movie.svg",
+                    "type": "image/svg+xml",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "文件夹",
+            "url": "/#folders",
+            "description": "文件夹",
+            "icons": [
+                {
+                    "src": "icons/folder.svg",
+                    "type": "image/svg+xml",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "设置",
+            "url": "/#settings",
+            "description": "设置",
+            "icons": [
+                {
+                    "src": "icons/settings.svg",
+                    "type": "image/svg+xml",
+                    "sizes": "96x96"
+                }
+            ]
+        }
+    ]
+}
