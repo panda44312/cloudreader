@@ -4480,7 +4480,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // 批量处理所有文件，每批2个文件，并发度为2
-            const result = await Utils.processBatch(files, processBatchBooks, 1, 1);
+            const result = await Utils.processBatch(files, processBatchBooks, 2, 2);
 
             hideLoading();
 
