@@ -973,6 +973,10 @@ with the content layers above it.
     gap: 0.25rem;
 }
 
+#readerChaptersPage .chapters-panel-box {
+    padding-top: 1.5rem;
+}
+
 .reader-container {
     min-height: calc(100dvh - 2rem);
 }
@@ -992,6 +996,7 @@ with the content layers above it.
 }
 
 .book-content p {
+    position: relative;
     font-size: var(--font-size);
     line-height: var(--line-spacing);
     color: var(--font-color);
@@ -1121,7 +1126,7 @@ with the content layers above it.
 }
 
 #readerSettingsPage .settings-box {
-    margin-top: 1rem;
+    margin-top: 2.5rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -1178,10 +1183,10 @@ with the content layers above it.
 }
 
 #readerSettingsPage .color-theme-preview {
-    width: 30px;
-    height: 30px;
+    width: 2rem;
+    height: 2rem;
     border-radius: 50%;
-    margin-bottom: 5px;
+    margin-bottom: 0.5rem;
     border: 1px solid rgba(0, 0, 0, 0.1);
     font-size: 12px;
 }
@@ -1255,7 +1260,7 @@ with the content layers above it.
 }
 
 .theme-watercolor-image {
-    --bg-color: #fefdfb;
+    --bg-color: #fff2f2;
     --bg-image: url('./bg/bg2-b.jpg');
     --font-color: #333e47;
 }
@@ -1270,40 +1275,65 @@ with the content layers above it.
     }
 }
 
-.theme-ink-image {
-    --bg-color: #f3f3f3;
-    --bg-image: url('./bg/bg3.jpg');
-    --font-color: #191a1a;
+.theme-pink-image {
+    --bg-color: #f3e9ed;
+    --bg-image: url('./bg/bg3-b.jpg');
+    --font-color: #2e2023;
 }
 
-.mdui-theme-dark.theme-ink-image {
+@media (max-width: 840px) {
+    .theme-pink-image {
+        --bg-image: url('./bg/bg3-m.jpg');
+    }
+}
+
+.mdui-theme-dark.theme-pink-image {
     --bg-color: #212123;
+}
+
+.theme-green-image {
+    --bg-color: #E3EDCD;
+    --bg-image: url('./bg/bg4-b.jpg');
+    --font-color: #1a2118;
+}
+
+@media (max-width: 840px) {
+    .theme-green-image {
+        --bg-image: url('./bg/bg4-m.jpg');
+    }
 }
 
 .theme-paper-image #readerPage.page-visible .reader-header,
 .theme-watercolor-image #readerPage.page-visible .reader-header,
-.theme-ink-image #readerPage.page-visible .reader-header {
+.theme-pink-image #readerPage.page-visible .reader-header,
+.theme-green-image #readerPage.page-visible .reader-header {
     border-bottom: none!important;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0.1));
 }
 
 .theme-paper-image #readerPage.page-visible .reader-bottom-bar,
 .theme-watercolor-image #readerPage.page-visible .reader-bottom-bar,
-.theme-ink-image #readerPage.page-visible .reader-bottom-bar {
+.theme-pink-image #readerPage.page-visible .reader-bottom-bar,
+.theme-green-image #readerPage.page-visible .reader-bottom-bar {
     border-top: none !important;
+    mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0.1));
 }
 
 .theme-paper-image #readerPage.page-visible .reader-header *,
 .theme-paper-image #readerPage.page-visible .reader-bottom-bar *,
 .theme-watercolor-image #readerPage.page-visible .reader-header *,
 .theme-watercolor-image #readerPage.page-visible .reader-bottom-bar *,
-.theme-ink-image #readerPage.page-visible .reader-header *,
-.theme-ink-image #readerPage.page-visible .reader-bottom-bar * {
+.theme-pink-image #readerPage.page-visible .reader-header *,
+.theme-pink-image #readerPage.page-visible .reader-bottom-bar *,
+.theme-green-image #readerPage.page-visible .reader-header *,
+.theme-green-image #readerPage.page-visible .reader-bottom-bar * {
     color: var(--font-color) !important;
 }
 
 html.reader-open.theme-paper-image body::before,
 html.reader-open.theme-watercolor-image body::before,
-html.reader-open.theme-ink-image body::before {
+html.reader-open.theme-pink-image body::before,
+html.reader-open.theme-green-image body::before {
     content: "";
     position: fixed;
     top: 0;
@@ -1322,8 +1352,10 @@ html.reader-open.theme-ink-image body::before {
 .theme-paper-image #readerPage.page-visible .reader-bottom-bar,
 .theme-watercolor-image #readerPage.page-visible .reader-header,
 .theme-watercolor-image #readerPage.page-visible .reader-bottom-bar,
-.theme-ink-image #readerPage.page-visible .reader-header,
-.theme-ink-image #readerPage.page-visible .reader-bottom-bar {
+.theme-pink-image #readerPage.page-visible .reader-header,
+.theme-pink-image #readerPage.page-visible .reader-bottom-bar,
+.theme-green-image #readerPage.page-visible .reader-header,
+.theme-green-image #readerPage.page-visible .reader-bottom-bar {
     background: none;
     transition: all 0.3s;
 }
@@ -1332,8 +1364,10 @@ html.reader-open.theme-ink-image body::before {
 .theme-paper-image #readerPage.page-visible .reader-bottom-bar.bg,
 .theme-watercolor-image #readerPage.page-visible .reader-header.bg,
 .theme-watercolor-image #readerPage.page-visible .reader-bottom-bar.bg,
-.theme-ink-image #readerPage.page-visible .reader-header.bg,
-.theme-ink-image #readerPage.page-visible .reader-bottom-bar.bg {
+.theme-pink-image #readerPage.page-visible .reader-header.bg,
+.theme-pink-image #readerPage.page-visible .reader-bottom-bar.bg,
+.theme-green-image #readerPage.page-visible .reader-header.bg,
+.theme-green-image #readerPage.page-visible .reader-bottom-bar.bg {
     backdrop-filter: blur(0.1rem);
 }
 

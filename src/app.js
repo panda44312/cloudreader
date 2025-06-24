@@ -3893,16 +3893,19 @@ document.addEventListener('DOMContentLoaded', () => {
         item.addEventListener('click', () => {
             document.querySelectorAll('.color-theme').forEach(theme => {
                 theme.classList.remove('active');
+                document.documentElement.classList.remove(`theme-${theme.getAttribute('data-theme')}`);
             });
 
             item.classList.add('active');
-            const theme = item.getAttribute('data-theme');
+            
+            document.documentElement.classList.add(`theme-${item.getAttribute('data-theme')}`);
+            userSettings.colorTheme = item.getAttribute('data-theme');
 
-            const prevTheme = document.documentElement.className.match(/theme-\w+/)?.[0] || 'theme-default';
-            document.documentElement.classList.remove(prevTheme);
-            document.documentElement.classList.add(`theme-${theme}`);
-            userSettings.colorTheme = theme;
-            UserManager.saveSettings();
+            setTimeout(() => {
+                UserManager.saveSettings();
+
+                applyUserSettings();
+            }, 100);
         });
     });
 
