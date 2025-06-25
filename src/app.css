@@ -1901,7 +1901,7 @@ mdui-dialog .modal-body mdui-tab-panel[active] {
 }
 
 /* ===== 16. iphone 设备样式 ===== */
-.pwa-full-screen {
+/* .pwa-full-screen {
     --navigation-bar-height: 6rem;
     --video-player-bottom: 1.5rem;
     --iframe-video-player-bottom: 1.5rem;
@@ -1918,7 +1918,7 @@ mdui-dialog .modal-body mdui-tab-panel[active] {
 
 .pwa-full-screen .save-settings-box {
     padding-bottom: 1rem !important;
-}
+} */
 
 /* 视频模块核心样式 */
 .video-player-main mdui-button-icon {
