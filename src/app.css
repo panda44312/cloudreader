@@ -1307,8 +1307,8 @@ with the content layers above it.
 .theme-watercolor-image #readerPage.page-visible .reader-header,
 .theme-pink-image #readerPage.page-visible .reader-header,
 .theme-green-image #readerPage.page-visible .reader-header {
-    border-bottom: none!important;
-    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0.1));
+    border-bottom: none !important;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 2.5rem, rgba(0, 0, 0, 0.1) 2.5rem);
 }
 
 .theme-paper-image #readerPage.page-visible .reader-bottom-bar,
@@ -1316,7 +1316,36 @@ with the content layers above it.
 .theme-pink-image #readerPage.page-visible .reader-bottom-bar,
 .theme-green-image #readerPage.page-visible .reader-bottom-bar {
     border-top: none !important;
-    mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0.1));
+    mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 2.5rem, rgba(0, 0, 0, 0.1) 2.5rem);
+}
+
+.theme-paper-image #readerPage.page-visible .reader-header::before,
+.theme-watercolor-image #readerPage.page-visible .reader-header::before,
+.theme-pink-image #readerPage.page-visible .reader-header::before,
+.theme-green-image #readerPage.page-visible .reader-header::before,
+.theme-paper-image #readerPage.page-visible .reader-bottom-bar::before,
+.theme-watercolor-image #readerPage.page-visible .reader-bottom-bar::before,
+.theme-pink-image #readerPage.page-visible .reader-bottom-bar::before,
+.theme-green-image #readerPage.page-visible .reader-bottom-bar::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background-image: var(--bg-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+}
+
+.theme-paper-image #readerPage.page-visible .reader-bottom-bar::before,
+.theme-watercolor-image #readerPage.page-visible .reader-bottom-bar::before,
+.theme-pink-image #readerPage.page-visible .reader-bottom-bar::before,
+.theme-green-image #readerPage.page-visible .reader-bottom-bar::before {
+    top: calc(-100vh + 2.5rem);
 }
 
 .theme-paper-image #readerPage.page-visible .reader-header *,
