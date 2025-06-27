@@ -1378,7 +1378,7 @@ html.reader-open.theme-green-image body::before {
     background-repeat: no-repeat;
     background-attachment: scroll;
 }
-
+/* 
 .theme-paper-image #readerPage.page-visible .reader-header,
 .theme-paper-image #readerPage.page-visible .reader-bottom-bar,
 .theme-watercolor-image #readerPage.page-visible .reader-header,
@@ -1400,7 +1400,7 @@ html.reader-open.theme-green-image body::before {
 .theme-green-image #readerPage.page-visible .reader-header.bg,
 .theme-green-image #readerPage.page-visible .reader-bottom-bar.bg {
     backdrop-filter: blur(0.1rem);
-}
+} */
 
 /* ===== 9. LOGIN/REGISTER PAGES ===== */
 #loginPage,
